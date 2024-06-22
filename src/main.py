@@ -7,7 +7,6 @@ import sounddevice as sd
 import librosa
 from time import perf_counter
 from utils import time_it
-import aubio
 
 
 def main():
