@@ -7,6 +7,7 @@ import sounddevice as sd
 import librosa
 from time import perf_counter
 from utils import time_it
+import dsp
 
 
 def main():
@@ -21,7 +22,6 @@ def main():
   exit_handler(states, app)
   app.exec()
 
-  
 def microphone_process(states: States):
   stream = sd.Stream(samplerate=Settings.SAMPLE_RATE, channels=Settings.CHANNELS, blocksize=Settings.INPUT_CHUNK, latency='low')
   stream.start()
@@ -46,12 +46,23 @@ def audio_synthesis_process(states):
       
       if mean > 0.0001:
         pitch_shift_steps = states.pitch_offset.value
-        sample = librosa.effects.pitch_shift(
+        # librosa_sample = librosa.effects.pitch_shift(
+        #   sample, 
+        #   sr=Settings.SAMPLE_RATE, 
+        #   n_steps=pitch_shift_steps,
+        #   res_type='fft'
+        # )
+        librosa_sample = dsp.pitch_shift(
           sample, 
           sr=Settings.SAMPLE_RATE, 
           n_steps=pitch_shift_steps
         )
-        states.output_sample[:] = sample[:]
+        # my_sample = pitch_shift(
+        #   sample, 
+        #   # sr=Settings.SAMPLE_RATE, 
+        #   n_steps=pitch_shift_steps
+        # )
+        states.output_sample[:] = librosa_sample[:]
 
 def playback_handler(states: States):
   stream = sd.OutputStream(

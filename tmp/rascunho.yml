@@ -1,0 +1,16 @@
+- Quando o playback rate for dobrado, o pitch é aumentado em uma oitava
+- Porém a duração também dobra e a duração acaba ficando na metade
+- Um pitchshifter não é nada mais nada menos que um time strecher
+# - A ideia é quebrar a duração no meio e manter as frequências, ou seja, dobrar a duração e manter as frequencias ?
+- Esticar a duração primeiro e depois dobrar o playbackrate perde menos informação
+
+- A ideia é pegar o sinal de entrada (analysis signal) e dividir em janelas
+- Com as janelas separadas, mover elas no sinal de saída (synthesis signal)
+- As janelas devem ser grandes o suficiente para capturar informação relevante sobre o sinal
+- Também devem ser pequenas o suficente para representar um momento instânteo no tempo
+- Isso acaba deixando gaps no aúdio
+- Para resolver os gaps as janelas devem se sobrepor
+- A distância entre o inicio de uma janela e a próxima janela se chama HOP LENGTH ou HOPSIGNAL
+- Após isso nas bordas das ondas ficarão descontinuidades, para resolver é necessário fazer mais uma sobreposição
+- Após a sobreposição, é necessário fazer um blend das descontinuidades, utilizando uma WINDOW FUNCTION (Hanning cos^2(pi*x/L))
+- E por final é necessário normalizar o sinal

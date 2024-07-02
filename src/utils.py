@@ -69,4 +69,5 @@ def thread_stater(target: Callable, *args: tuple):
 def time_it(block_name: str):
   start = perf_counter()
   yield
-  print(f'{block_name} took: {perf_counter() - start}')
+  if perf_counter() - start > 1:
+    print(f'{block_name} took: {perf_counter() - start}')

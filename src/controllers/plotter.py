@@ -40,7 +40,7 @@ class Plotter(QMainWindow):
     
     self.scroll_bar = QScrollBar()
     self.scroll_bar.setOrientation(Qt.Orientation.Horizontal)
-    self.scroll_bar.setRange(-50, 50)
+    self.scroll_bar.setRange(-12, 12)
     layout.addWidget(self.scroll_bar)
 
     central_widget = QWidget()
