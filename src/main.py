@@ -1,12 +1,9 @@
-from utils import States, process_stater, exit_handler, shared_array_to_numpy, thread_stater
+from utils import States, process_stater, exit_handler, shared_array_to_numpy
 import numpy as np
 from settings import Settings
 from PyQt6.QtWidgets import QApplication
 from controllers.plotter import Plotter
 import sounddevice as sd
-import librosa
-from time import perf_counter
-from utils import time_it
 import dsp
 
 
@@ -27,7 +24,6 @@ def microphone_process(states: States):
   stream.start()
   
   while states.running.value:
-    # with time_it('microphone_process'):
     if stream.read_available >= Settings.INPUT_CHUNK:
       sample = stream.read(Settings.INPUT_CHUNK)[0]
       
@@ -39,30 +35,18 @@ def microphone_process(states: States):
 def audio_synthesis_process(states):
   print('audio_synthesis_process started')
   while states.running.value:
-    # with time_it('audio_synthesis_process'):
     with states.lock:
       sample = shared_array_to_numpy(states.input_sample)
       mean = np.mean(np.abs(sample))
       
       if mean > 0.0001:
         pitch_shift_steps = states.pitch_offset.value
-        # librosa_sample = librosa.effects.pitch_shift(
-        #   sample, 
-        #   sr=Settings.SAMPLE_RATE, 
-        #   n_steps=pitch_shift_steps,
-        #   res_type='fft'
-        # )
-        librosa_sample = dsp.pitch_shift(
+        sample = dsp.pitch_shift(
           sample, 
           sr=Settings.SAMPLE_RATE, 
           n_steps=pitch_shift_steps
         )
-        # my_sample = pitch_shift(
-        #   sample, 
-        #   # sr=Settings.SAMPLE_RATE, 
-        #   n_steps=pitch_shift_steps
-        # )
-        states.output_sample[:] = librosa_sample[:]
+        states.output_sample[:] = sample[:]
 
 def playback_handler(states: States):
   stream = sd.OutputStream(
@@ -76,7 +60,6 @@ def playback_handler(states: States):
   stream.start() 
   
   while states.running.value:
-    # with time_it('playback_handler'):
     if stream.write_available >= Settings.INPUT_CHUNK * 2:
       with states.lock:
         sample = shared_array_to_numpy(states.output_sample)
