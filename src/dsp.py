@@ -5,7 +5,7 @@ import scipy
 
 
 def pitch_shift(sample: np.ndarray, sr: int, n_steps: int) -> np.ndarray:
-  rate = 2.0 ** (-float(n_steps) / 12) # 12 tom por oitava
+  rate = 2.0 ** (-float(n_steps) / 12) # n_steps tom por oitava
 
   y_shift = resample(
     time_stretch(sample, rate=rate),
